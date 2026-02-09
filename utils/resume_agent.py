@@ -140,6 +140,20 @@ class ResumeAgent:
             """
             
             for exp in self.resume_state['experience']:
+                # Handle both string and dict formats
+                if isinstance(exp, str):
+                    # If exp is a string, display it as a simple bullet point
+                    html += f"""
+                    <div style="margin-bottom: 15px;">
+                        <p style="margin: 0;">{html_module.escape(self._clean_html(exp))}</p>
+                    </div>
+                    """
+                    continue
+                
+                # Handle dict format
+                if not isinstance(exp, dict):
+                    continue
+                    
                 # Clean and escape HTML from data
                 title = html_module.escape(self._clean_html(str(exp.get('title', ''))))
                 company = html_module.escape(self._clean_html(str(exp.get('company', ''))))
@@ -153,6 +167,11 @@ class ResumeAgent:
                 """
                 
                 achievements = exp.get('responsibilities', exp.get('achievements', []))
+                if isinstance(achievements, str):
+                    achievements = [achievements]
+                elif not isinstance(achievements, list):
+                    achievements = []
+                    
                 for achievement in achievements:
                     # Clean and escape each achievement
                     clean_achievement = html_module.escape(self._clean_html(str(achievement)))
