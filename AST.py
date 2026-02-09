@@ -976,6 +976,45 @@ with tab4:
     if st.session_state.generated_resume:
         resume_data = st.session_state.generated_resume
         
+        # Live PDF Preview
+        st.subheader("📄 Live PDF Preview")
+        
+        # Generate HTML preview using resume agent if available
+        if hasattr(st.session_state, 'resume_agent') and st.session_state.resume_agent:
+            import streamlit.components.v1 as components
+            pdf_html = st.session_state.resume_agent.get_resume_pdf_html(highlight_changes=False)
+            
+            # Wrap in a scrollable container
+            full_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body {{
+                        margin: 0;
+                        padding: 20px;
+                        background: #f5f5f5;
+                        font-family: Arial, sans-serif;
+                    }}
+                    .container {{
+                        max-height: 600px;
+                        overflow-y: auto;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    {pdf_html}
+                </div>
+            </body>
+            </html>
+            """
+            
+            components.html(full_html, height=650, scrolling=True)
+        
+        st.markdown("---")
+        
         col1, col2 = st.columns(2)
         
         with col1:
