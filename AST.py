@@ -753,6 +753,8 @@ with tab3:
             
             # Calculate arc endpoint for the score
             import math
+            import streamlit.components.v1 as components
+            
             # Convert score (0-100) to angle (180-0 degrees, going clockwise from left)
             angle = 180 - (score / 100) * 180  # Start from 180° (left) and go to 0° (right)
             angle_rad = math.radians(angle)
@@ -767,44 +769,76 @@ with tab3:
             # Determine if we need large arc flag (for scores > 50)
             large_arc = 1 if score > 50 else 0
             
-            st.markdown(f"""
-            <div style="text-align: center; padding: 2rem;">
-                <svg width="220" height="140" viewBox="0 0 220 140" style="overflow: visible;">
-                    <!-- Background arc (gray semicircle) -->
-                    <path d="M 20 100 A 80 80 0 0 1 180 100" 
-                          fill="none" 
-                          stroke="#e0e0e0" 
-                          stroke-width="16" 
-                          stroke-linecap="round"/>
+            # Use components.html for proper rendering
+            gauge_html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{
+                        margin: 0;
+                        padding: 0;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background: transparent;
+                    }}
+                    .gauge-container {{
+                        text-align: center;
+                        padding: 1rem;
+                    }}
+                    .scale-labels {{
+                        display: flex;
+                        justify-content: space-between;
+                        width: 180px;
+                        margin: 10px auto 0;
+                        font-size: 12px;
+                        color: #999;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="gauge-container">
+                    <svg width="220" height="140" viewBox="0 0 220 140">
+                        <!-- Background arc (gray semicircle) -->
+                        <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                              fill="none" 
+                              stroke="#e0e0e0" 
+                              stroke-width="16" 
+                              stroke-linecap="round"/>
+                        
+                        <!-- Score arc (colored portion) -->
+                        <path d="M 20 100 A 80 80 0 {large_arc} 1 {end_x:.2f} {end_y:.2f}" 
+                              fill="none" 
+                              stroke="{color}" 
+                              stroke-width="16" 
+                              stroke-linecap="round"/>
+                        
+                        <!-- Score number -->
+                        <text x="100" y="85" 
+                              text-anchor="middle" 
+                              font-size="42" 
+                              font-weight="bold" 
+                              fill="#333">{score}</text>
+                        
+                        <!-- Status text -->
+                        <text x="100" y="110" 
+                              text-anchor="middle" 
+                              font-size="14" 
+                              fill="#666">{status}</text>
+                    </svg>
                     
-                    <!-- Score arc (colored portion) -->
-                    <path d="M 20 100 A 80 80 0 {large_arc} 1 {end_x:.2f} {end_y:.2f}" 
-                          fill="none" 
-                          stroke="{color}" 
-                          stroke-width="16" 
-                          stroke-linecap="round"/>
-                    
-                    <!-- Score number -->
-                    <text x="100" y="85" 
-                          text-anchor="middle" 
-                          font-size="42" 
-                          font-weight="bold" 
-                          fill="#333">{score}</text>
-                    
-                    <!-- Status text -->
-                    <text x="100" y="110" 
-                          text-anchor="middle" 
-                          font-size="14" 
-                          fill="#666">{status}</text>
-                </svg>
-                
-                <!-- Scale labels -->
-                <div style="display: flex; justify-content: space-between; width: 180px; margin: 10px auto 0; font-size: 12px; color: #999;">
-                    <span>0</span>
-                    <span>100</span>
+                    <!-- Scale labels -->
+                    <div class="scale-labels">
+                        <span>0</span>
+                        <span>100</span>
+                    </div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
+            </body>
+            </html>
+            """
+            
+            components.html(gauge_html, height=200)
         
         with col2:
             st.subheader("How You Compare")
