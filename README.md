@@ -208,11 +208,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Groq for providing the AI API
 - Streamlit for the amazing framework
-- All contributors and users
 
 ## 📧 Contact
 
-For questions or support, please open an issue on GitHub.
+For questions or support, contact: harshvardhankhot12@gmail.com
 
 ## 🚀 Deployment
 
