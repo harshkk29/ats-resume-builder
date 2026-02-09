@@ -747,31 +747,59 @@ with tab3:
             st.subheader("Rezi Score")
             st.markdown(f"<p style='color: #666; font-size: 14px;'>{st.session_state.generated_resume.get('name', 'Your')} Resume</p>", unsafe_allow_html=True)
             
-            # Gauge chart using HTML/CSS
+            # Gauge chart using HTML/CSS with proper semicircle
             color = "#dc3545" if score < 60 else "#ffc107" if score < 80 else "#28a745"
             status = "Needs improvement" if score < 60 else "Good" if score < 80 else "Excellent"
             
             # Calculate arc endpoint for the score
             import math
-            angle = (score / 100) * 180  # 0-180 degrees
+            # Convert score (0-100) to angle (180-0 degrees, going clockwise from left)
+            angle = 180 - (score / 100) * 180  # Start from 180° (left) and go to 0° (right)
             angle_rad = math.radians(angle)
-            end_x = 100 + 80 * math.cos(math.pi - angle_rad)
-            end_y = 100 - 80 * math.sin(math.pi - angle_rad)
-            large_arc = 1 if angle > 90 else 0
+            
+            # Calculate end point on the arc
+            center_x = 100
+            center_y = 100
+            radius = 80
+            end_x = center_x + radius * math.cos(angle_rad)
+            end_y = center_y - radius * math.sin(angle_rad)
+            
+            # Determine if we need large arc flag (for scores > 50)
+            large_arc = 1 if score > 50 else 0
             
             st.markdown(f"""
             <div style="text-align: center; padding: 2rem;">
-                <svg width="200" height="120" viewBox="0 0 200 120">
-                    <!-- Background arc -->
-                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="20" stroke-linecap="round"/>
-                    <!-- Score arc -->
-                    <path d="M 20 100 A 80 80 0 {large_arc} 1 {end_x} {end_y}" 
-                          fill="none" stroke="{color}" stroke-width="20" stroke-linecap="round"/>
-                    <!-- Score text -->
-                    <text x="100" y="80" text-anchor="middle" font-size="48" font-weight="bold" fill="#333">{score}</text>
-                    <text x="100" y="105" text-anchor="middle" font-size="14" fill="#666">{status}</text>
+                <svg width="220" height="140" viewBox="0 0 220 140" style="overflow: visible;">
+                    <!-- Background arc (gray semicircle) -->
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" 
+                          fill="none" 
+                          stroke="#e0e0e0" 
+                          stroke-width="16" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Score arc (colored portion) -->
+                    <path d="M 20 100 A 80 80 0 {large_arc} 1 {end_x:.2f} {end_y:.2f}" 
+                          fill="none" 
+                          stroke="{color}" 
+                          stroke-width="16" 
+                          stroke-linecap="round"/>
+                    
+                    <!-- Score number -->
+                    <text x="100" y="85" 
+                          text-anchor="middle" 
+                          font-size="42" 
+                          font-weight="bold" 
+                          fill="#333">{score}</text>
+                    
+                    <!-- Status text -->
+                    <text x="100" y="110" 
+                          text-anchor="middle" 
+                          font-size="14" 
+                          fill="#666">{status}</text>
                 </svg>
-                <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: #999;">
+                
+                <!-- Scale labels -->
+                <div style="display: flex; justify-content: space-between; width: 180px; margin: 10px auto 0; font-size: 12px; color: #999;">
                     <span>0</span>
                     <span>100</span>
                 </div>
