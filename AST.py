@@ -27,67 +27,196 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS - Enhanced Modern UI
 st.markdown("""
 <style>
+    /* Main container */
+    .main {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    /* Header styling */
     .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #60a5fa;
-        background: linear-gradient(120deg, #60a5fa, #a78bfa);
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         text-align: center;
-        margin-bottom: 1rem;
-        padding: 1rem 0;
+        margin-bottom: 2rem;
+        padding: 1.5rem 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        animation: fadeIn 1s ease-in;
     }
+    
+    /* Score card with glassmorphism */
     .score-card {
-        padding: 1.5rem;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+        backdrop-filter: blur(10px);
         color: white;
         text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        margin: 1.5rem 0;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+    
+    .score-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Chat container */
     .chat-container {
-        height: 400px;
+        height: 450px;
         overflow-y: auto;
-        padding: 1rem;
-        background-color: rgba(30, 30, 30, 0.3);
-        border-radius: 10px;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
         margin-bottom: 1rem;
-        border: 2px solid rgba(100, 100, 100, 0.3);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+    
+    /* User message bubble */
     .user-message {
-        background: linear-gradient(120deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 10px 15px;
-        border-radius: 15px 15px 5px 15px;
-        margin: 8px 0;
-        max-width: 85%;
+        padding: 12px 18px;
+        border-radius: 20px 20px 5px 20px;
+        margin: 10px 0;
+        max-width: 80%;
         margin-left: auto;
         word-wrap: break-word;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        animation: slideInRight 0.3s ease;
     }
+    
+    /* AI message bubble */
     .ai-message {
-        background-color: rgba(60, 60, 60, 0.5);
-        border: 1px solid rgba(100, 100, 100, 0.5);
-        color: #e0e0e0;
-        padding: 10px 15px;
-        border-radius: 15px 15px 15px 5px;
-        margin: 8px 0;
-        max-width: 85%;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 20px 20px 20px 5px;
+        margin: 10px 0;
+        max-width: 80%;
         word-wrap: break-word;
+        box-shadow: 0 4px 10px rgba(245, 87, 108, 0.3);
+        animation: slideInLeft 0.3s ease;
     }
+    
+    /* Button styling */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(120deg, #3498db, #8e44ad);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        font-weight: bold;
+        font-weight: 600;
         border: none;
-        padding: 0.75rem;
-        border-radius: 8px;
+        padding: 0.85rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+        padding: 8px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    /* Input fields */
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
+        border-radius: 10px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        padding: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* File uploader */
+    .stFileUploader {
+        border: 2px dashed rgba(102, 126, 234, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .stFileUploader:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    /* Success/Error messages */
+    .stSuccess, .stError, .stWarning, .stInfo {
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     }
 </style>
 """, unsafe_allow_html=True)
