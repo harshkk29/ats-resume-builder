@@ -190,20 +190,34 @@ class ResumeAgent:
             """
             
             for proj in self.resume_state['projects']:
-                html += f'<div style="margin-bottom: 12px;"><p style="margin: 0; font-weight: bold;">{proj.get("name", "")}</p>'
+                # Handle both string and dict formats
+                if isinstance(proj, str):
+                    html += f'<div style="margin-bottom: 12px;"><p style="margin: 0;">{html_module.escape(self._clean_html(proj))}</p></div>'
+                    continue
+                
+                if not isinstance(proj, dict):
+                    continue
+                    
+                html += f'<div style="margin-bottom: 12px;"><p style="margin: 0; font-weight: bold;">{html_module.escape(self._clean_html(proj.get("name", "")))}</p>'
                 
                 if proj.get('technologies'):
-                    tech_list = ', '.join([str(t) for t in proj['technologies']])
-                    html += f'<p style="margin: 2px 0; font-size: 9pt; color: #666;"><em>Technologies: {tech_list}</em></p>'
+                    technologies = proj['technologies']
+                    tech_list = ', '.join([str(t) for t in technologies]) if isinstance(technologies, list) else str(technologies)
+                    html += f'<p style="margin: 2px 0; font-size: 9pt; color: #666;"><em>Technologies: {html_module.escape(self._clean_html(tech_list))}</em></p>'
                 
                 if proj.get('description'):
-                    html += f'<p style="margin: 4px 0;">{proj["description"]}</p>'
+                    html += f'<p style="margin: 4px 0;">{html_module.escape(self._clean_html(proj["description"]))}</p>'
                 
                 if proj.get('achievements'):
-                    html += '<ul style="margin: 4px 0; padding-left: 20px;">'
-                    for ach in proj['achievements']:
-                        html += f'<li style="margin-bottom: 2px;">{ach}</li>'
-                    html += '</ul>'
+                    achievements = proj['achievements']
+                    if isinstance(achievements, str):
+                        achievements = [achievements]
+                    
+                    if isinstance(achievements, list):
+                        html += '<ul style="margin: 4px 0; padding-left: 20px;">'
+                        for ach in achievements:
+                            html += f'<li style="margin-bottom: 2px;">{html_module.escape(self._clean_html(str(ach)))}</li>'
+                        html += '</ul>'
                 
                 html += '</div>'
             
@@ -218,12 +232,20 @@ class ResumeAgent:
             """
             
             for edu in self.resume_state['education']:
+                # Handle both string and dict formats
+                if isinstance(edu, str):
+                    html += f'<div style="margin-bottom: 8px;"><p style="margin: 0;">{html_module.escape(self._clean_html(edu))}</p></div>'
+                    continue
+                
+                if not isinstance(edu, dict):
+                    continue
+                    
                 html += f'<div style="margin-bottom: 8px;">'
-                html += f'<p style="margin: 0; font-weight: bold;">{edu.get("degree", "")} | {edu.get("institution", "")}</p>'
-                html += f'<p style="margin: 2px 0; font-size: 9pt; color: #666;">{edu.get("year", "")}'
+                html += f'<p style="margin: 0; font-weight: bold;">{html_module.escape(self._clean_html(edu.get("degree", "")))} | {html_module.escape(self._clean_html(edu.get("institution", "")))}</p>'
+                html += f'<p style="margin: 2px 0; font-size: 9pt; color: #666;">{html_module.escape(self._clean_html(edu.get("year", "")))}'
                 
                 if edu.get('gpa'):
-                    html += f' | GPA: {edu["gpa"]}'
+                    html += f' | GPA: {html_module.escape(self._clean_html(str(edu["gpa"])))}'
                 
                 html += '</p></div>'
             
@@ -239,7 +261,8 @@ class ResumeAgent:
             """
             
             for cert in self.resume_state['certifications']:
-                html += f'<li style="margin-bottom: 4px;">{cert}</li>'
+                # Handle any list item type
+                html += f'<li style="margin-bottom: 4px;">{html_module.escape(self._clean_html(str(cert)))}</li>'
             
             html += '</ul></div>'
         

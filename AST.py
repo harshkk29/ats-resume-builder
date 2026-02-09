@@ -424,11 +424,16 @@ with tab1:
                         
                         st.session_state.generated_resume = final_resume_data
                         
+                        # Initialize AI Agent with the newly generated resume
+                        from utils.resume_agent import ResumeAgent
+                        st.session_state.resume_agent = ResumeAgent(ai_helper)
+                        st.session_state.resume_agent.initialize_resume(final_resume_data)
+                        
                         score_data = ai_helper.calculate_ats_score(final_resume_data, job_description)
                         st.session_state.ats_score = ATSScorer.format_score_display(score_data)
                         st.session_state.score_last_updated = datetime.now()
                         
-                        st.success("✅ Resume generated!")
+                        st.success("✅ Resume generated! You can now edit it in the '🤖 AI Agent Resume' tab or see the preview in the '💾 Download' tab.")
                         st.balloons()
                         
                 except Exception as e:
