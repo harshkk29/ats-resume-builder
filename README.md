@@ -1,6 +1,7 @@
 # 🚀 AI-Powered ATS Resume Builder
 
 An intelligent resume builder powered by AI that helps you create ATS-optimized resumes with real-time scoring and interactive editing.
+Click here on the Web link to use it: https://ats-resume-builder-becvrgw7vsizzwxwq6dx9j.streamlit.app/
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.31-red)
