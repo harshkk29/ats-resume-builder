@@ -981,42 +981,59 @@ with tab4:
     if st.session_state.generated_resume:
         resume_data = st.session_state.generated_resume
         
+        # Ensure resume_agent is initialized for the preview
+        from utils.resume_agent import ResumeAgent
+        if not st.session_state.resume_agent:
+            st.session_state.resume_agent = ResumeAgent(ai_helper)
+            st.session_state.resume_agent.initialize_resume(resume_data)
+        
         # Live PDF Preview
         st.subheader("📄 Live PDF Preview")
         
-        # Generate HTML preview using resume agent if available
-        if hasattr(st.session_state, 'resume_agent') and st.session_state.resume_agent:
-            import streamlit.components.v1 as components
-            pdf_html = st.session_state.resume_agent.get_resume_pdf_html(highlight_changes=False)
-            
-            # Wrap in a scrollable container
-            full_html = f"""
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body {{
-                        margin: 0;
-                        padding: 20px;
-                        background: #f5f5f5;
-                        font-family: Arial, sans-serif;
-                    }}
-                    .container {{
-                        max-height: 600px;
-                        overflow-y: auto;
-                    }}
-                </style>
-            </head>
-            <body>
+        import streamlit.components.v1 as components
+        pdf_html = st.session_state.resume_agent.get_resume_pdf_html(highlight_changes=False)
+        
+        # Wrap in a scrollable, centered container
+        full_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 40px 20px;
+                    background: #f0f2f6;
+                    display: flex;
+                    justify-content: center;
+                    font-family: Arial, sans-serif;
+                }}
+                .preview-wrapper {{
+                    width: 100%;
+                    max-width: 850px;
+                    background: white;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                    border-radius: 8px;
+                    overflow: hidden;
+                }}
+                .container {{
+                    max-height: 800px;
+                    overflow-y: auto;
+                    padding: 0;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="preview-wrapper">
                 <div class="container">
                     {pdf_html}
                 </div>
-            </body>
-            </html>
-            """
-            
-            components.html(full_html, height=650, scrolling=True)
+            </div>
+        </body>
+        </html>
+        """
+        
+        components.html(full_html, height=750, scrolling=True)
         
         st.markdown("---")
         
